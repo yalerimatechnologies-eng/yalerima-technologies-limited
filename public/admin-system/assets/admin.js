@@ -267,39 +267,35 @@
     },
 
     async guard() {
-      const token =
-        localStorage.getItem(
-          "yalerima_admin_access_token"
-        );
+      const loginPage = "/admin-system/login.html";
+      const token = localStorage.getItem(
+        "yalerima_admin_access_token"
+      );
 
-      const stored =
-        localStorage.getItem(
-          "yalerima_admin_user"
-        );
-
-      if (!token || !stored) {
-        window.location.href =
-          "/admin-system/login.html";
-
+      if (!token) {
+        window.location.replace(loginPage);
         return null;
       }
 
       let user;
 
       try {
-        user = JSON.parse(stored);
-      } catch {
+        user = await this.getSession();
+      } catch (error) {
+        console.error("Admin session validation failed:", error);
         await this.logout();
         return null;
       }
 
-      if (
-        user.id !==
-        this.config.adminUserId
-      ) {
+      if (!user || user.id !== this.config.adminUserId) {
         await this.logout();
         return null;
       }
+
+      localStorage.setItem(
+        "yalerima_admin_user",
+        JSON.stringify(user)
+      );
 
       return user;
     },
