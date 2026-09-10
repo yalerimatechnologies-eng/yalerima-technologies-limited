@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <title>Dashboard | YALERIMA TECHNOLOGIES LIMITED</title>
+  <link rel="stylesheet" href="/admin-system/assets/admin.css">
+</head>
+
+<body class="admin-body">
+
+<div id="adminSidebarOverlay" class="admin-sidebar-overlay"></div>
+
+<aside id="adminSidebar" class="admin-sidebar">
+  <div class="admin-sidebar-brand">
+    <img src="/logo.png" alt="Yalerima Technologies Limited">
+
+    <div>
+      <strong>YALERIMA</strong>
+      <small>ADMINISTRATION</small>
+    </div>
+  </div>
+
+  <nav>
+    <a class="active" href="/admin-system/dashboard.html">
+      <span>01</span>
+      Dashboard
+    </a>
+
+    <a href="/admin-system/projects.html">
+      <span>02</span>
+      Projects
+    </a>
+
+    <a href="/admin-system/messages.html">
+      <span>03</span>
+      Messages
+    </a>
+
+    <a href="/admin-system/settings.html">
+      <span>04</span>
+      Settings
+    </a>
+
+    <a href="/" target="_blank">
+      <span>05</span>
+      View Website
+    </a>
+  </nav>
+
+  <div class="admin-sidebar-bottom">
+    <div class="admin-user-mini">
+      <div class="admin-avatar">YT</div>
+
+      <div>
+        <strong>Administrator</strong>
+        <small data-admin-email>Administrator</small>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      data-logout
+      class="admin-logout"
+    >
+      Sign out
+    </button>
+  </div>
+</aside>
+
+<main class="admin-main">
+  <header class="admin-topbar">
+    <button
+      id="adminMenuButton"
+      class="admin-menu-button"
+      type="button"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div>
+      <span class="admin-kicker">
+        YALERIMA TECHNOLOGIES LIMITED
+      </span>
+
+      <h1>Dashboard</h1>
+    </div>
+
+    <a
+      href="/"
+      target="_blank"
+      class="admin-view-site"
+    >
+      View website ↗
+    </a>
+  </header>
+
+  <section class="admin-content">
+    <div class="welcome-panel">
+      <div>
+        <span class="admin-kicker">
+          ADMINISTRATIVE OVERVIEW
+        </span>
+
+        <h2>
+          Good to see you.
+          <em>Everything in one place.</em>
+        </h2>
+
+        <p>
+          Manage projects, review client enquiries
+          and control the public digital experience
+          from this administration portal.
+        </p>
+      </div>
+
+      <a
+        href="/admin-system/projects.html"
+        class="admin-button primary"
+      >
+        Manage Projects ↗
+      </a>
+    </div>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>PROJECTS</span>
+        <strong id="totalProjects">—</strong>
+        <small>Total records</small>
+      </article>
+
+      <article class="stat-card">
+        <span>PUBLISHED</span>
+        <strong id="publishedProjects">—</strong>
+        <small>Visible publicly</small>
+      </article>
+
+      <article class="stat-card">
+        <span>FEATURED</span>
+        <strong id="featuredProjects">—</strong>
+        <small>Featured work</small>
+      </article>
+
+      <article class="stat-card message-stat">
+        <span>NEW MESSAGES</span>
+        <strong id="newMessages">—</strong>
+        <small>Require attention</small>
+      </article>
+    </div>
+
+    <div class="dashboard-grid">
+      <section class="admin-panel">
+        <div class="panel-heading">
+          <div>
+            <span class="admin-kicker">
+              RECENT ENQUIRIES
+            </span>
+
+            <h2>Client messages</h2>
+          </div>
+
+          <a href="/admin-system/messages.html">
+            View all →
+          </a>
+        </div>
+
+        <div id="recentMessages">
+          <div class="admin-loading">
+            Loading messages...
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-heading">
+          <div>
+            <span class="admin-kicker">
+              RECENT WORK
+            </span>
+
+            <h2>Projects</h2>
+          </div>
+
+          <a href="/admin-system/projects.html">
+            Manage →
+          </a>
+        </div>
+
+        <div id="recentProjects">
+          <div class="admin-loading">
+            Loading projects...
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<script src="/admin-system/assets/config.js"></script>
+<script src="/admin-system/assets/admin.js"></script>
+
+<script>
+(async () => {
+  const admin =
+    await window.YalerimaAdmin.guard();
+
+  if (!admin) return;
+
+  window.YalerimaAdmin.bindShell();
+
+  async function loadStats() {
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/projects?select=id,published,featured"
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      const projects =
+        await response.json();
+
+      const total =
+        projects.length;
+
+      const published =
+        projects.filter(
+          (item) => item.published
+        ).length;
+
+      const featured =
+        projects.filter(
+          (item) => item.featured
+        ).length;
+
+      document.getElementById(
+        "totalProjects"
+      ).textContent = total;
+
+      document.getElementById(
+        "publishedProjects"
+      ).textContent = published;
+
+      document.getElementById(
+        "featuredProjects"
+      ).textContent = featured;
+
+      const messageResponse =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/client_messages?select=id,status&status=eq.new"
+        );
+
+      if (messageResponse.ok) {
+        const messages =
+          await messageResponse.json();
+
+        document.getElementById(
+          "newMessages"
+        ).textContent =
+          messages.length;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function loadMessages() {
+    const root =
+      document.getElementById(
+        "recentMessages"
+      );
+
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/client_messages?select=*&order=created_at.desc&limit=5"
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      const messages =
+        await response.json();
+
+      if (!messages.length) {
+        root.innerHTML =
+          '<div class="admin-empty">No client messages yet.</div>';
+        return;
+      }
+
+      root.innerHTML =
+        messages
+          .map(
+            (message) => `
+              <a
+                class="recent-row"
+                href="/admin-system/messages.html?id=${encodeURIComponent(message.id)}"
+              >
+                <div class="recent-avatar">
+                  ${window.YalerimaAdmin.escape(
+                    (message.name || "?")
+                      .slice(0, 1)
+                      .toUpperCase()
+                  )}
+                </div>
+
+                <div>
+                  <strong>
+                    ${window.YalerimaAdmin.escape(
+                      message.name ||
+                      "Unknown client"
+                    )}
+                  </strong>
+
+                  <span>
+                    ${window.YalerimaAdmin.escape(
+                      message.subject ||
+                      "Website enquiry"
+                    )}
+                  </span>
+                </div>
+
+                <small>
+                  ${window.YalerimaAdmin.formatDate(
+                    message.created_at
+                  )}
+                </small>
+              </a>
+            `
+          )
+          .join("");
+    } catch (error) {
+      root.innerHTML =
+        '<div class="admin-empty">Messages could not be loaded.</div>';
+    }
+  }
+
+  async function loadProjects() {
+    const root =
+      document.getElementById(
+        "recentProjects"
+      );
+
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/projects?select=*&order=created_at.desc&limit=5"
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      const projects =
+        await response.json();
+
+      if (!projects.length) {
+        root.innerHTML =
+          '<div class="admin-empty">No projects have been added.</div>';
+        return;
+      }
+
+      root.innerHTML =
+        projects
+          .map(
+            (project) => `
+              <a
+                class="recent-row"
+                href="/admin-system/projects.html?id=${encodeURIComponent(project.id)}"
+              >
+                <div class="recent-project-thumb">
+                  ${
+                    project.cover_image
+                      ? `<img src="${window.YalerimaAdmin.escape(project.cover_image)}" alt="">`
+                      : `<img src="/logo.png" alt="">`
+                  }
+                </div>
+
+                <div>
+                  <strong>
+                    ${window.YalerimaAdmin.escape(
+                      project.title ||
+                      project.project_name ||
+                      "Untitled project"
+                    )}
+                  </strong>
+
+                  <span>
+                    ${project.published ? "Published" : "Draft"}
+                    ${project.featured ? " · Featured" : ""}
+                  </span>
+                </div>
+
+                <small>
+                  ${window.YalerimaAdmin.formatDate(
+                    project.created_at
+                  )}
+                </small>
+              </a>
+            `
+          )
+          .join("");
+    } catch (error) {
+      root.innerHTML =
+        '<div class="admin-empty">Projects could not be loaded.</div>';
+    }
+  }
+
+  await loadStats();
+  await loadMessages();
+  await loadProjects();
+})();
+</script>
+
+</body>
+</html>

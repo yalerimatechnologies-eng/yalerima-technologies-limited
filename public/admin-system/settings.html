@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <title>Settings | YALERIMA TECHNOLOGIES LIMITED</title>
+  <link rel="stylesheet" href="/admin-system/assets/admin.css">
+</head>
+
+<body class="admin-body">
+
+<div id="adminSidebarOverlay" class="admin-sidebar-overlay"></div>
+
+<aside id="adminSidebar" class="admin-sidebar">
+  <div class="admin-sidebar-brand">
+    <img src="/logo.png" alt="Yalerima Technologies Limited">
+    <div>
+      <strong>YALERIMA</strong>
+      <small>ADMINISTRATION</small>
+    </div>
+  </div>
+
+  <nav>
+    <a href="/admin-system/dashboard.html"><span>01</span>Dashboard</a>
+    <a href="/admin-system/projects.html"><span>02</span>Projects</a>
+    <a href="/admin-system/messages.html"><span>03</span>Messages</a>
+    <a class="active" href="/admin-system/settings.html"><span>04</span>Settings</a>
+    <a href="/" target="_blank"><span>05</span>View Website</a>
+  </nav>
+
+  <div class="admin-sidebar-bottom">
+    <div class="admin-user-mini">
+      <div class="admin-avatar">YT</div>
+      <div>
+        <strong>Administrator</strong>
+        <small data-admin-email>Administrator</small>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      data-logout
+      class="admin-logout"
+    >
+      Sign out
+    </button>
+  </div>
+</aside>
+
+<main class="admin-main">
+  <header class="admin-topbar">
+    <button
+      id="adminMenuButton"
+      class="admin-menu-button"
+      type="button"
+    >
+      <span></span><span></span><span></span>
+    </button>
+
+    <div>
+      <span class="admin-kicker">
+        SYSTEM CONTROL
+      </span>
+      <h1>Settings</h1>
+    </div>
+  </header>
+
+  <section class="admin-content settings-grid">
+    <section class="admin-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="admin-kicker">
+            ADMINISTRATOR
+          </span>
+          <h2>Account</h2>
+        </div>
+      </div>
+
+      <div class="settings-card-row">
+        <span>Authenticated email</span>
+        <strong data-admin-email>—</strong>
+      </div>
+
+      <div class="settings-card-row">
+        <span>Authorised user ID</span>
+        <strong>
+          f644751b-9059-4715-badb-5e4ce6a30be3
+        </strong>
+      </div>
+
+      <button
+        type="button"
+        data-logout
+        class="admin-button danger"
+      >
+        Sign out
+      </button>
+    </section>
+
+    <section class="admin-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="admin-kicker">
+            WEBSITE
+          </span>
+          <h2>Quick access</h2>
+        </div>
+      </div>
+
+      <div class="settings-links">
+        <a href="/" target="_blank">
+          <span>Public website</span>
+          <b>↗</b>
+        </a>
+
+        <a href="/message.html" target="_blank">
+          <span>Client message page</span>
+          <b>↗</b>
+        </a>
+
+        <a href="/projects.html" target="_blank">
+          <span>Public projects</span>
+          <b>↗</b>
+        </a>
+      </div>
+    </section>
+
+    <section class="admin-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="admin-kicker">
+            SYSTEM
+          </span>
+          <h2>Architecture</h2>
+        </div>
+      </div>
+
+      <p class="settings-description">
+        The public website, client messaging system,
+        project catalogue and administrator portal
+        use the same Supabase project while remaining
+        separated into clean application areas.
+      </p>
+
+      <div class="system-status">
+        <span></span>
+        Supabase connection configured
+      </div>
+
+      <div class="system-status">
+        <span></span>
+        Administrator UUID protection enabled
+      </div>
+
+      <div class="system-status">
+        <span></span>
+        Public projects read only when published
+      </div>
+
+      <div class="system-status">
+        <span></span>
+        Client messages stored in database
+      </div>
+    </section>
+  </section>
+</main>
+
+<script src="/admin-system/assets/config.js"></script>
+<script src="/admin-system/assets/admin.js"></script>
+
+<script>
+(async () => {
+  const admin =
+    await window.YalerimaAdmin.guard();
+
+  if (!admin) return;
+
+  window.YalerimaAdmin.bindShell();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <title>Projects Management | YALERIMA TECHNOLOGIES LIMITED</title>
+  <link rel="stylesheet" href="/admin-system/assets/admin.css">
+</head>
+
+<body class="admin-body">
+
+<div id="adminSidebarOverlay" class="admin-sidebar-overlay"></div>
+
+<aside id="adminSidebar" class="admin-sidebar">
+  <div class="admin-sidebar-brand">
+    <img src="/logo.png" alt="Yalerima Technologies Limited">
+    <div>
+      <strong>YALERIMA</strong>
+      <small>ADMINISTRATION</small>
+    </div>
+  </div>
+
+  <nav>
+    <a href="/admin-system/dashboard.html"><span>01</span>Dashboard</a>
+    <a class="active" href="/admin-system/projects.html"><span>02</span>Projects</a>
+    <a href="/admin-system/messages.html"><span>03</span>Messages</a>
+    <a href="/admin-system/settings.html"><span>04</span>Settings</a>
+    <a href="/" target="_blank"><span>05</span>View Website</a>
+  </nav>
+
+  <div class="admin-sidebar-bottom">
+    <div class="admin-user-mini">
+      <div class="admin-avatar">YT</div>
+      <div>
+        <strong>Administrator</strong>
+        <small data-admin-email>Administrator</small>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      data-logout
+      class="admin-logout"
+    >
+      Sign out
+    </button>
+  </div>
+</aside>
+
+<main class="admin-main">
+  <header class="admin-topbar">
+    <button
+      id="adminMenuButton"
+      class="admin-menu-button"
+      type="button"
+    >
+      <span></span><span></span><span></span>
+    </button>
+
+    <div>
+      <span class="admin-kicker">
+        CONTENT MANAGEMENT
+      </span>
+      <h1>Projects</h1>
+    </div>
+
+    <button
+      id="newProjectButton"
+      class="admin-button primary"
+      type="button"
+    >
+      + Add Project
+    </button>
+  </header>
+
+  <section class="admin-content">
+    <div class="management-toolbar">
+      <input
+        id="projectSearch"
+        type="search"
+        placeholder="Search projects..."
+      >
+
+      <select id="projectStatus">
+        <option value="">All statuses</option>
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+        <option value="featured">Featured</option>
+      </select>
+    </div>
+
+    <div
+      id="projectList"
+      class="admin-project-list"
+    >
+      <div class="admin-loading">
+        Loading projects...
+      </div>
+    </div>
+  </section>
+</main>
+
+<div
+  id="projectModal"
+  class="admin-modal"
+  aria-hidden="true"
+>
+  <div
+    class="admin-modal-backdrop"
+    data-close-modal
+  ></div>
+
+  <section class="admin-modal-card project-modal-card">
+    <div class="modal-header">
+      <div>
+        <span class="admin-kicker">
+          PROJECT MANAGEMENT
+        </span>
+        <h2 id="modalTitle">
+          Add Project
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        data-close-modal
+      >
+        ×
+      </button>
+    </div>
+
+    <form id="projectForm">
+      <input
+        id="projectId"
+        type="hidden"
+      >
+
+      <div class="form-section-title">
+        Basic information
+      </div>
+
+      <div class="admin-form-grid">
+        <label>
+          Project title *
+          <input id="title" required>
+        </label>
+
+        <label>
+          Project name
+          <input id="project_name">
+        </label>
+
+        <label>
+          Category
+          <input id="category" placeholder="Web, Education, Healthcare...">
+        </label>
+
+        <label>
+          Industry
+          <input id="industry">
+        </label>
+
+        <label>
+          Client name
+          <input id="client_name">
+        </label>
+
+        <label>
+          Location
+          <input id="location">
+        </label>
+      </div>
+
+      <label>
+        Short description
+        <textarea
+          id="short_description"
+          rows="3"
+        ></textarea>
+      </label>
+
+      <label>
+        Full description / About project
+        <textarea
+          id="description"
+          rows="7"
+        ></textarea>
+      </label>
+
+      <div class="form-section-title">
+        Media and links
+      </div>
+
+      <div class="admin-form-grid">
+        <label>
+          Project logo URL
+          <input
+            id="project_logo"
+            type="url"
+            placeholder="https://..."
+          >
+        </label>
+
+        <label>
+          Cover image URL
+          <input
+            id="cover_image"
+            type="url"
+            placeholder="https://..."
+          >
+        </label>
+
+        <label>
+          Project website URL
+          <input
+            id="project_url"
+            type="url"
+            placeholder="https://..."
+          >
+        </label>
+
+        <label>
+          Case study URL
+          <input
+            id="case_study_url"
+            type="url"
+            placeholder="https://..."
+          >
+        </label>
+
+        <label>
+          GitHub URL
+          <input
+            id="github_url"
+            type="url"
+            placeholder="https://github.com/..."
+          >
+        </label>
+
+        <label>
+          Video URL
+          <input
+            id="video_url"
+            type="url"
+            placeholder="https://..."
+          >
+        </label>
+      </div>
+
+      <label>
+        Technologies
+        <input
+          id="technologies"
+          placeholder="React, Supabase, JavaScript..."
+        >
+      </label>
+
+      <label>
+        Features
+        <textarea
+          id="features"
+          rows="4"
+        ></textarea>
+      </label>
+
+      <div class="form-section-title">
+        Publishing
+      </div>
+
+      <div class="admin-form-grid">
+        <label>
+          Display order
+          <input
+            id="display_order"
+            type="number"
+            value="0"
+          >
+        </label>
+
+        <label>
+          Project slug
+          <input id="slug">
+        </label>
+      </div>
+
+      <div class="switch-row">
+        <label class="switch-label">
+          <input
+            id="published"
+            type="checkbox"
+          >
+          <span></span>
+          <strong>Published</strong>
+        </label>
+
+        <label class="switch-label">
+          <input
+            id="featured"
+            type="checkbox"
+          >
+          <span></span>
+          <strong>Featured</strong>
+        </label>
+      </div>
+
+      <div
+        id="projectFormError"
+        class="portal-alert error"
+        hidden
+      ></div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="admin-button secondary"
+          data-close-modal
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          id="saveProjectButton"
+          class="admin-button primary"
+        >
+          Save Project
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<script src="/admin-system/assets/config.js"></script>
+<script src="/admin-system/assets/admin.js"></script>
+
+<script>
+(async () => {
+  const admin =
+    await window.YalerimaAdmin.guard();
+
+  if (!admin) return;
+
+  window.YalerimaAdmin.bindShell();
+
+  const list =
+    document.getElementById(
+      "projectList"
+    );
+
+  const search =
+    document.getElementById(
+      "projectSearch"
+    );
+
+  const status =
+    document.getElementById(
+      "projectStatus"
+    );
+
+  const modal =
+    document.getElementById(
+      "projectModal"
+    );
+
+  const form =
+    document.getElementById(
+      "projectForm"
+    );
+
+  const modalTitle =
+    document.getElementById(
+      "modalTitle"
+    );
+
+  const errorBox =
+    document.getElementById(
+      "projectFormError"
+    );
+
+  const saveButton =
+    document.getElementById(
+      "saveProjectButton"
+    );
+
+  let projects = [];
+
+  function field(id) {
+    return document.getElementById(id);
+  }
+
+  function openModal(project = null) {
+    errorBox.hidden = true;
+
+    modal.classList.add("open");
+    modal.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+    modalTitle.textContent =
+      project
+        ? "Edit Project"
+        : "Add Project";
+
+    form.reset();
+
+    field("projectId").value =
+      project?.id || "";
+
+    field("title").value =
+      project?.title || "";
+
+    field("project_name").value =
+      project?.project_name || "";
+
+    field("category").value =
+      project?.category ||
+      project?.project_category ||
+      "";
+
+    field("industry").value =
+      project?.industry || "";
+
+    field("client_name").value =
+      project?.client_name || "";
+
+    field("location").value =
+      project?.location || "";
+
+    field("short_description").value =
+      project?.short_description || "";
+
+    field("description").value =
+      project?.description ||
+      project?.full_description ||
+      project?.about ||
+      "";
+
+    field("project_logo").value =
+      project?.project_logo || "";
+
+    field("cover_image").value =
+      project?.cover_image ||
+      project?.image_url ||
+      "";
+
+    field("project_url").value =
+      project?.project_url || "";
+
+    field("case_study_url").value =
+      project?.case_study_url || "";
+
+    field("github_url").value =
+      project?.github_url || "";
+
+    field("video_url").value =
+      project?.video_url || "";
+
+    field("technologies").value =
+      project?.technologies || "";
+
+    field("features").value =
+      project?.features || "";
+
+    field("display_order").value =
+      project?.display_order ?? 0;
+
+    field("slug").value =
+      project?.slug || "";
+
+    field("published").checked =
+      Boolean(project?.published);
+
+    field("featured").checked =
+      Boolean(project?.featured);
+
+    document.body.classList.add(
+      "modal-open"
+    );
+  }
+
+  function closeModal() {
+    modal.classList.remove("open");
+    modal.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    document.body.classList.remove(
+      "modal-open"
+    );
+  }
+
+  document
+    .querySelectorAll("[data-close-modal]")
+    .forEach((element) => {
+      element.addEventListener(
+        "click",
+        closeModal
+      );
+    });
+
+  document
+    .getElementById("newProjectButton")
+    .addEventListener(
+      "click",
+      () => openModal()
+    );
+
+  async function loadProjects() {
+    list.innerHTML =
+      '<div class="admin-loading">Loading projects...</div>';
+
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/projects?select=*&order=display_order.asc,created_at.desc"
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      projects =
+        await response.json();
+
+      render();
+    } catch (error) {
+      console.error(error);
+
+      list.innerHTML =
+        '<div class="portal-alert error">Projects could not be loaded.</div>';
+    }
+  }
+
+  function render() {
+    const query =
+      search.value
+        .trim()
+        .toLowerCase();
+
+    const selected =
+      status.value;
+
+    const visible =
+      projects.filter((project) => {
+        const text =
+          [
+            project.title,
+            project.project_name,
+            project.description,
+            project.category,
+            project.client_name
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+        if (
+          query &&
+          !text.includes(query)
+        ) {
+          return false;
+        }
+
+        if (
+          selected ===
+            "published" &&
+          !project.published
+        ) {
+          return false;
+        }
+
+        if (
+          selected ===
+            "draft" &&
+          project.published
+        ) {
+          return false;
+        }
+
+        if (
+          selected ===
+            "featured" &&
+          !project.featured
+        ) {
+          return false;
+        }
+
+        return true;
+      });
+
+    if (!visible.length) {
+      list.innerHTML =
+        '<div class="admin-empty large">No projects match your current filters.</div>';
+      return;
+    }
+
+    list.innerHTML =
+      visible
+        .map(
+          (project) => `
+            <article class="admin-project-row">
+              <div class="admin-project-image">
+                ${
+                  project.cover_image
+                    ? `<img src="${window.YalerimaAdmin.escape(project.cover_image)}" alt="">`
+                    : `<img src="/logo.png" alt="">`
+                }
+              </div>
+
+              <div class="admin-project-info">
+                <div class="project-row-meta">
+                  <span>
+                    ${window.YalerimaAdmin.escape(
+                      project.category ||
+                      "PROJECT"
+                    )}
+                  </span>
+
+                  ${
+                    project.featured
+                      ? "<b>FEATURED</b>"
+                      : ""
+                  }
+                </div>
+
+                <h2>
+                  ${window.YalerimaAdmin.escape(
+                    project.title ||
+                    project.project_name ||
+                    "Untitled project"
+                  )}
+                </h2>
+
+                <p>
+                  ${window.YalerimaAdmin.escape(
+                    project.short_description ||
+                    project.description ||
+                    "No description."
+                  )}
+                </p>
+              </div>
+
+              <div class="project-statuses">
+                <span class="${
+                  project.published
+                    ? "status published"
+                    : "status draft"
+                }">
+                  ${
+                    project.published
+                      ? "Published"
+                      : "Draft"
+                  }
+                </span>
+
+                <small>
+                  Order:
+                  ${
+                    project.display_order ??
+                    0
+                  }
+                </small>
+              </div>
+
+              <div class="project-actions">
+                <button
+                  type="button"
+                  class="small-admin-button"
+                  data-edit="${project.id}"
+                >
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  class="small-admin-button"
+                  data-toggle="${project.id}"
+                >
+                  ${
+                    project.published
+                      ? "Unpublish"
+                      : "Publish"
+                  }
+                </button>
+
+                <button
+                  type="button"
+                  class="small-admin-button danger"
+                  data-delete="${project.id}"
+                >
+                  Delete
+                </button>
+              </div>
+            </article>
+          `
+        )
+        .join("");
+
+    list
+      .querySelectorAll("[data-edit]")
+      .forEach((button) => {
+        button.addEventListener(
+          "click",
+          () => {
+            const project =
+              projects.find(
+                (item) =>
+                  item.id ===
+                  button.dataset.edit
+              );
+
+            if (project) {
+              openModal(project);
+            }
+          }
+        );
+      });
+
+    list
+      .querySelectorAll("[data-toggle]")
+      .forEach((button) => {
+        button.addEventListener(
+          "click",
+          () =>
+            togglePublish(
+              button.dataset.toggle
+            )
+        );
+      });
+
+    list
+      .querySelectorAll("[data-delete]")
+      .forEach((button) => {
+        button.addEventListener(
+          "click",
+          () =>
+            deleteProject(
+              button.dataset.delete
+            )
+        );
+      });
+  }
+
+  async function togglePublish(id) {
+    const project =
+      projects.find(
+        (item) => item.id === id
+      );
+
+    if (!project) return;
+
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/projects?id=eq." +
+            encodeURIComponent(id),
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              published:
+                !project.published
+            })
+          }
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      window.YalerimaAdmin.toast(
+        project.published
+          ? "Project unpublished."
+          : "Project published."
+      );
+
+      await loadProjects();
+    } catch (error) {
+      window.YalerimaAdmin.toast(
+        "Unable to change project status.",
+        "error"
+      );
+    }
+  }
+
+  async function deleteProject(id) {
+    const project =
+      projects.find(
+        (item) => item.id === id
+      );
+
+    if (!project) return;
+
+    const confirmed =
+      window.confirm(
+        "Delete this project permanently? This action cannot be undone."
+      );
+
+    if (!confirmed) return;
+
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/projects?id=eq." +
+            encodeURIComponent(id),
+          {
+            method: "DELETE"
+          }
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      window.YalerimaAdmin.toast(
+        "Project deleted."
+      );
+
+      await loadProjects();
+    } catch (error) {
+      window.YalerimaAdmin.toast(
+        "Project could not be deleted.",
+        "error"
+      );
+    }
+  }
+
+  form.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
+
+      errorBox.hidden = true;
+
+      const id =
+        field("projectId").value;
+
+      const payload = {
+        title:
+          field("title").value.trim(),
+
+        project_name:
+          field("project_name").value.trim() ||
+          null,
+
+        category:
+          field("category").value.trim() ||
+          null,
+
+        industry:
+          field("industry").value.trim() ||
+          null,
+
+        client_name:
+          field("client_name").value.trim() ||
+          null,
+
+        location:
+          field("location").value.trim() ||
+          null,
+
+        short_description:
+          field("short_description")
+            .value
+            .trim() ||
+          null,
+
+        description:
+          field("description")
+            .value
+            .trim() ||
+          null,
+
+        project_logo:
+          field("project_logo")
+            .value
+            .trim() ||
+          null,
+
+        cover_image:
+          field("cover_image")
+            .value
+            .trim() ||
+          null,
+
+        project_url:
+          field("project_url")
+            .value
+            .trim() ||
+          null,
+
+        case_study_url:
+          field("case_study_url")
+            .value
+            .trim() ||
+          null,
+
+        github_url:
+          field("github_url")
+            .value
+            .trim() ||
+          null,
+
+        video_url:
+          field("video_url")
+            .value
+            .trim() ||
+          null,
+
+        technologies:
+          field("technologies")
+            .value
+            .trim() ||
+          null,
+
+        features:
+          field("features")
+            .value
+            .trim() ||
+          null,
+
+        display_order:
+          Number(
+            field("display_order")
+              .value || 0
+          ),
+
+        slug:
+          field("slug")
+            .value
+            .trim() ||
+          null,
+
+        published:
+          field("published").checked,
+
+        featured:
+          field("featured").checked
+      };
+
+      if (!payload.title) {
+        errorBox.textContent =
+          "Project title is required.";
+
+        errorBox.hidden = false;
+        return;
+      }
+
+      saveButton.disabled = true;
+      saveButton.textContent =
+        "Saving...";
+
+      try {
+        const response =
+          await window.YalerimaAdmin.adminRequest(
+            id
+              ? "/rest/v1/projects?id=eq." +
+                  encodeURIComponent(id)
+              : "/rest/v1/projects",
+            {
+              method:
+                id ? "PATCH" : "POST",
+              body:
+                JSON.stringify(payload)
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            await response.text()
+          );
+        }
+
+        closeModal();
+
+        window.YalerimaAdmin.toast(
+          id
+            ? "Project updated successfully."
+            : "Project created successfully."
+        );
+
+        await loadProjects();
+      } catch (error) {
+        console.error(error);
+
+        errorBox.textContent =
+          "The project could not be saved. Please check your database fields and try again.";
+
+        errorBox.hidden = false;
+      } finally {
+        saveButton.disabled = false;
+        saveButton.textContent =
+          "Save Project";
+      }
+    }
+  );
+
+  search.addEventListener(
+    "input",
+    render
+  );
+
+  status.addEventListener(
+    "change",
+    render
+  );
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const editId =
+    params.get("id");
+
+  await loadProjects();
+
+  if (editId) {
+    const project =
+      projects.find(
+        (item) =>
+          item.id === editId
+      );
+
+    if (project) {
+      openModal(project);
+    }
+  }
+})();
+</script>
+
+</body>
+</html>

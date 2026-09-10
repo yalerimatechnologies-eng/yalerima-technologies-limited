@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <title>Message YALERIMA TECHNOLOGIES LIMITED</title>
+  <meta name="description" content="Send a project enquiry directly to YALERIMA TECHNOLOGIES LIMITED.">
+  <link rel="stylesheet" href="/admin-system/assets/portal.css">
+</head>
+
+<body class="portal-body public-page">
+  <header class="public-header">
+    <a href="/" class="portal-brand">
+      <span class="portal-logo">
+        <img src="/logo.png" alt="Yalerima Technologies Limited">
+      </span>
+      <span>
+        <strong>YALERIMA</strong>
+        <small>TECHNOLOGIES LIMITED</small>
+      </span>
+    </a>
+
+    <nav>
+      <a href="/">Home</a>
+      <a href="/projects.html">Projects</a>
+      <a href="/admin-system/login.html">Admin</a>
+    </nav>
+  </header>
+
+  <main class="public-main">
+    <section class="message-layout">
+      <div class="message-intro">
+        <div class="portal-kicker">START A CONVERSATION</div>
+
+        <h1>
+          Tell us what you want
+          <em>to build.</em>
+        </h1>
+
+        <p>
+          Send your requirements directly to our
+          website system. Your message will be
+          received by our team and reviewed by an
+          administrator.
+        </p>
+
+        <div class="message-promise">
+          <span>24 HOURS</span>
+          <p>
+            We aim to review and respond to genuine
+            project enquiries within 24 hours.
+          </p>
+        </div>
+      </div>
+
+      <div class="message-card">
+        <form id="messageForm">
+          <div class="form-grid">
+            <label>
+              Full name
+              <input
+                id="name"
+                name="name"
+                required
+                autocomplete="name"
+                placeholder="Your full name"
+              >
+            </label>
+
+            <label>
+              Email address
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="you@example.com"
+              >
+            </label>
+
+            <label>
+              Phone number
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                autocomplete="tel"
+                placeholder="+234..."
+              >
+            </label>
+
+            <label>
+              Subject
+              <input
+                id="subject"
+                name="subject"
+                placeholder="Project enquiry"
+              >
+            </label>
+          </div>
+
+          <label>
+            Your message
+            <textarea
+              id="message"
+              name="message"
+              rows="8"
+              required
+              placeholder="Tell us about your organisation, project, requirements or idea..."
+            ></textarea>
+          </label>
+
+          <div
+            id="messageError"
+            class="portal-alert error"
+            hidden
+          ></div>
+
+          <button
+            id="sendButton"
+            class="portal-button primary full"
+            type="submit"
+          >
+            <span>Send Message</span>
+            <b>↗</b>
+          </button>
+
+          <small class="privacy-note">
+            Your message is submitted directly to
+            YALERIMA TECHNOLOGIES LIMITED's secure
+            website database. This form does not use
+            an email-sending service.
+          </small>
+        </form>
+
+        <div
+          id="successState"
+          class="success-state"
+          hidden
+        >
+          <div class="success-mark">✓</div>
+
+          <div class="portal-kicker">
+            MESSAGE RECEIVED
+          </div>
+
+          <h2>
+            Your message has been
+            <em>successfully received.</em>
+          </h2>
+
+          <p>
+            Thank you for contacting YALERIMA
+            TECHNOLOGIES LIMITED. Your enquiry has
+            been recorded by our website system.
+            Our team will review it and aim to
+            respond within 24 hours.
+          </p>
+
+          <a
+            href="/"
+            class="portal-button primary"
+          >
+            Return to website
+          </a>
+
+          <button
+            id="newMessageButton"
+            class="portal-button secondary"
+            type="button"
+          >
+            Send another message
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="public-footer">
+    <span>© 2026 YALERIMA TECHNOLOGIES LIMITED</span>
+    <span>Designed &amp; engineered in Nigeria</span>
+  </footer>
+
+  <script>
+    const SUPABASE_URL =
+      "https://ooxknodhtlowkxolizoq.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_Zz1GZKarl9DiRlAoTzI6MQ_1uZ5OWEZ";
+
+    const form =
+      document.getElementById("messageForm");
+
+    const sendButton =
+      document.getElementById("sendButton");
+
+    const errorBox =
+      document.getElementById("messageError");
+
+    const successState =
+      document.getElementById("successState");
+
+    const newMessageButton =
+      document.getElementById("newMessageButton");
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.hidden = false;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      errorBox.hidden = true;
+
+      const name =
+        document.getElementById("name").value.trim();
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const phone =
+        document.getElementById("phone").value.trim();
+
+      const subject =
+        document.getElementById("subject").value.trim();
+
+      const message =
+        document.getElementById("message").value.trim();
+
+      if (!name || !email || !message) {
+        showError(
+          "Please complete your name, email address and message."
+        );
+        return;
+      }
+
+      sendButton.disabled = true;
+      sendButton.querySelector("span").textContent =
+        "Sending securely...";
+
+      try {
+        const response = await fetch(
+          SUPABASE_URL +
+          "/rest/v1/client_messages",
+          {
+            method: "POST",
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization:
+                "Bearer " + SUPABASE_KEY,
+              "Content-Type":
+                "application/json",
+              Prefer: "return=minimal"
+            },
+            body: JSON.stringify({
+              name,
+              email,
+              phone: phone || null,
+              subject:
+                subject || "Website enquiry",
+              message,
+              status: "new",
+              priority: "normal"
+            })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            await response.text()
+          );
+        }
+
+        form.hidden = true;
+        successState.hidden = false;
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      } catch (error) {
+        console.error(error);
+
+        showError(
+          "We could not submit your message right now. Please try again."
+        );
+      } finally {
+        sendButton.disabled = false;
+        sendButton.querySelector("span").textContent =
+          "Send Message";
+      }
+    });
+
+    newMessageButton.addEventListener(
+      "click",
+      () => {
+        form.reset();
+        form.hidden = false;
+        successState.hidden = true;
+      }
+    );
+  </script>
+</body>
+</html>

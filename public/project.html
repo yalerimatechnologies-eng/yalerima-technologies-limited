@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <title>Project | YALERIMA TECHNOLOGIES LIMITED</title>
+  <link rel="stylesheet" href="/admin-system/assets/portal.css">
+</head>
+
+<body class="portal-body public-page">
+
+<header class="public-header">
+  <a href="/" class="portal-brand">
+    <span class="portal-logo">
+      <img src="/logo.png" alt="Yalerima Technologies Limited">
+    </span>
+
+    <span>
+      <strong>YALERIMA</strong>
+      <small>TECHNOLOGIES LIMITED</small>
+    </span>
+  </a>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/projects.html">Projects</a>
+    <a href="/message.html">Message Us</a>
+  </nav>
+</header>
+
+<main class="public-main project-detail">
+  <div id="projectDetail">
+    <div class="loading-public">
+      Loading project...
+    </div>
+  </div>
+</main>
+
+<footer class="public-footer">
+  <span>© 2026 YALERIMA TECHNOLOGIES LIMITED</span>
+  <span>Designed &amp; engineered in Nigeria</span>
+</footer>
+
+<script>
+  const SUPABASE_URL =
+    "https://ooxknodhtlowkxolizoq.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_Zz1GZKarl9DiRlAoTzI6MQ_1uZ5OWEZ";
+
+  const root =
+    document.getElementById("projectDetail");
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const id = params.get("id");
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  async function loadProject() {
+    if (!id) {
+      root.innerHTML =
+        '<div class="portal-alert error">Project not found.</div>';
+      return;
+    }
+
+    try {
+      const url =
+        SUPABASE_URL +
+        "/rest/v1/projects" +
+        "?select=*" +
+        "&id=eq." +
+        encodeURIComponent(id) +
+        "&published=eq.true";
+
+      const response = await fetch(url, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization:
+            "Bearer " + SUPABASE_KEY
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      const records =
+        await response.json();
+
+      const project = records[0];
+
+      if (!project) {
+        root.innerHTML =
+          '<div class="portal-alert error">This project is not available.</div>';
+        return;
+      }
+
+      const title =
+        project.title ||
+        project.project_name ||
+        "Project";
+
+      const category =
+        project.category ||
+        project.project_category ||
+        "PROJECT";
+
+      const image =
+        project.cover_image ||
+        project.image_url ||
+        project.project_logo ||
+        "";
+
+      root.innerHTML = `
+        <section class="detail-hero">
+          <div>
+            <div class="portal-kicker">
+              ${escapeHtml(category)}
+            </div>
+
+            <h1>
+              ${escapeHtml(title)}
+            </h1>
+
+            ${
+              project.short_description
+                ? `<p>${escapeHtml(project.short_description)}</p>`
+                : ""
+            }
+          </div>
+
+          ${
+            image
+              ? `
+                <div class="detail-image">
+                  <img
+                    src="${escapeHtml(image)}"
+                    alt="${escapeHtml(title)}"
+                  >
+                </div>
+              `
+              : ""
+          }
+        </section>
+
+        <section class="detail-content">
+          <div class="detail-main">
+            <div class="portal-kicker">
+              PROJECT INFORMATION
+            </div>
+
+            <h2>
+              ${
+                escapeHtml(
+                  project.project_name ||
+                  title
+                )
+              }
+            </h2>
+
+            <div class="detail-description">
+              ${formatText(
+                project.full_description ||
+                project.description ||
+                project.about ||
+                project.short_description ||
+                "Project information is being prepared."
+              )}
+            </div>
+          </div>
+
+          <aside class="detail-sidebar">
+            ${
+              project.client_name
+                ? `
+                  <div>
+                    <span>CLIENT</span>
+                    <strong>${escapeHtml(project.client_name)}</strong>
+                  </div>
+                `
+                : ""
+            }
+
+            ${
+              project.industry
+                ? `
+                  <div>
+                    <span>INDUSTRY</span>
+                    <strong>${escapeHtml(project.industry)}</strong>
+                  </div>
+                `
+                : ""
+            }
+
+            ${
+              project.location
+                ? `
+                  <div>
+                    <span>LOCATION</span>
+                    <strong>${escapeHtml(project.location)}</strong>
+                  </div>
+                `
+                : ""
+            }
+
+            ${
+              project.technologies
+                ? `
+                  <div>
+                    <span>TECHNOLOGIES</span>
+                    <strong>${escapeHtml(project.technologies)}</strong>
+                  </div>
+                `
+                : ""
+            }
+
+            <a
+              href="/message.html"
+              class="portal-button primary full"
+            >
+              Discuss a Project
+              <b>↗</b>
+            </a>
+          </aside>
+        </section>
+      `;
+
+      registerView(id);
+    } catch (error) {
+      console.error(error);
+
+      root.innerHTML =
+        '<div class="portal-alert error">The project could not be loaded.</div>';
+    }
+  }
+
+  function formatText(text) {
+    return escapeHtml(text)
+      .split(/\n{2,}/)
+      .map(
+        (paragraph) =>
+          `<p>${paragraph.replace(/\n/g, "<br>")}</p>`
+      )
+      .join("");
+  }
+
+  async function registerView(projectId) {
+    try {
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/rpc/increment_project_views",
+        {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization:
+              "Bearer " + SUPABASE_KEY,
+            "Content-Type":
+              "application/json"
+          },
+          body: JSON.stringify({
+            project_id: projectId
+          })
+        }
+      );
+    } catch {}
+  }
+
+  loadProject();
+</script>
+
+</body>
+</html>

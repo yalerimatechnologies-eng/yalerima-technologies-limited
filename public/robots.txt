@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin-system/
+
+Sitemap: https://yalereima.com.ng/sitemap.xml

@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <title>Messages | YALERIMA TECHNOLOGIES LIMITED</title>
+  <link rel="stylesheet" href="/admin-system/assets/admin.css">
+</head>
+
+<body class="admin-body">
+
+<div id="adminSidebarOverlay" class="admin-sidebar-overlay"></div>
+
+<aside id="adminSidebar" class="admin-sidebar">
+  <div class="admin-sidebar-brand">
+    <img src="/logo.png" alt="Yalerima Technologies Limited">
+    <div>
+      <strong>YALERIMA</strong>
+      <small>ADMINISTRATION</small>
+    </div>
+  </div>
+
+  <nav>
+    <a href="/admin-system/dashboard.html"><span>01</span>Dashboard</a>
+    <a href="/admin-system/projects.html"><span>02</span>Projects</a>
+    <a class="active" href="/admin-system/messages.html"><span>03</span>Messages</a>
+    <a href="/admin-system/settings.html"><span>04</span>Settings</a>
+    <a href="/" target="_blank"><span>05</span>View Website</a>
+  </nav>
+
+  <div class="admin-sidebar-bottom">
+    <div class="admin-user-mini">
+      <div class="admin-avatar">YT</div>
+      <div>
+        <strong>Administrator</strong>
+        <small data-admin-email>Administrator</small>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      data-logout
+      class="admin-logout"
+    >
+      Sign out
+    </button>
+  </div>
+</aside>
+
+<main class="admin-main">
+  <header class="admin-topbar">
+    <button
+      id="adminMenuButton"
+      class="admin-menu-button"
+      type="button"
+    >
+      <span></span><span></span><span></span>
+    </button>
+
+    <div>
+      <span class="admin-kicker">
+        CLIENT COMMUNICATION
+      </span>
+      <h1>Messages</h1>
+    </div>
+  </header>
+
+  <section class="admin-content">
+    <div class="management-toolbar">
+      <input
+        id="messageSearch"
+        type="search"
+        placeholder="Search name, email, subject or message..."
+      >
+
+      <select id="messageStatus">
+        <option value="">All statuses</option>
+        <option value="new">New</option>
+        <option value="read">Read</option>
+        <option value="replied">Replied</option>
+        <option value="closed">Closed</option>
+      </select>
+
+      <select id="messagePriority">
+        <option value="">All priorities</option>
+        <option value="urgent">Urgent</option>
+        <option value="high">High</option>
+        <option value="normal">Normal</option>
+        <option value="low">Low</option>
+      </select>
+    </div>
+
+    <div class="messages-layout">
+      <section
+        id="messageList"
+        class="admin-message-list"
+      >
+        <div class="admin-loading">
+          Loading messages...
+        </div>
+      </section>
+
+      <aside
+        id="messageDetail"
+        class="message-detail-panel"
+      >
+        <div class="detail-placeholder">
+          <div>03</div>
+          <h2>Select a message</h2>
+          <p>
+            Choose a client enquiry to view its
+            full details and manage its status.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<script src="/admin-system/assets/config.js"></script>
+<script src="/admin-system/assets/admin.js"></script>
+
+<script>
+(async () => {
+  const admin =
+    await window.YalerimaAdmin.guard();
+
+  if (!admin) return;
+
+  window.YalerimaAdmin.bindShell();
+
+  const list =
+    document.getElementById(
+      "messageList"
+    );
+
+  const detail =
+    document.getElementById(
+      "messageDetail"
+    );
+
+  const search =
+    document.getElementById(
+      "messageSearch"
+    );
+
+  const status =
+    document.getElementById(
+      "messageStatus"
+    );
+
+  const priority =
+    document.getElementById(
+      "messagePriority"
+    );
+
+  let messages = [];
+
+  async function loadMessages() {
+    list.innerHTML =
+      '<div class="admin-loading">Loading messages...</div>';
+
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/client_messages?select=*&order=created_at.desc"
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      messages =
+        await response.json();
+
+      renderList();
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const selectedId =
+        params.get("id");
+
+      if (selectedId) {
+        const message =
+          messages.find(
+            (item) =>
+              item.id ===
+              selectedId
+          );
+
+        if (message) {
+          openMessage(message);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+
+      list.innerHTML =
+        '<div class="portal-alert error">Messages could not be loaded.</div>';
+    }
+  }
+
+  function filteredMessages() {
+    const query =
+      search.value
+        .trim()
+        .toLowerCase();
+
+    return messages.filter(
+      (message) => {
+        const text =
+          [
+            message.name,
+            message.email,
+            message.subject,
+            message.message
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+        if (
+          query &&
+          !text.includes(query)
+        ) {
+          return false;
+        }
+
+        if (
+          status.value &&
+          message.status !==
+            status.value
+        ) {
+          return false;
+        }
+
+        if (
+          priority.value &&
+          message.priority !==
+            priority.value
+        ) {
+          return false;
+        }
+
+        return true;
+      }
+    );
+  }
+
+  function renderList() {
+    const visible =
+      filteredMessages();
+
+    if (!visible.length) {
+      list.innerHTML =
+        '<div class="admin-empty large">No messages match the current filters.</div>';
+      return;
+    }
+
+    list.innerHTML =
+      visible
+        .map(
+          (message) => `
+            <button
+              type="button"
+              class="message-row ${
+                message.status === "new"
+                  ? "unread"
+                  : ""
+              }"
+              data-message-id="${message.id}"
+            >
+              <div class="message-avatar">
+                ${window.YalerimaAdmin.escape(
+                  (message.name || "?")
+                    .slice(0, 1)
+                    .toUpperCase()
+                )}
+              </div>
+
+              <div class="message-row-main">
+                <div>
+                  <strong>
+                    ${window.YalerimaAdmin.escape(
+                      message.name ||
+                      "Unknown client"
+                    )}
+                  </strong>
+
+                  <span>
+                    ${window.YalerimaAdmin.escape(
+                      message.email ||
+                      ""
+                    )}
+                  </span>
+                </div>
+
+                <h3>
+                  ${window.YalerimaAdmin.escape(
+                    message.subject ||
+                    "Website enquiry"
+                  )}
+                </h3>
+
+                <p>
+                  ${window.YalerimaAdmin.escape(
+                    message.message ||
+                    ""
+                  )}
+                </p>
+              </div>
+
+              <div class="message-row-side">
+                <span class="status ${window.YalerimaAdmin.escape(
+                  message.status ||
+                  "new"
+                )}">
+                  ${window.YalerimaAdmin.escape(
+                    message.status ||
+                    "new"
+                  )}
+                </span>
+
+                <small>
+                  ${window.YalerimaAdmin.formatDate(
+                    message.created_at
+                  )}
+                </small>
+              </div>
+            </button>
+          `
+        )
+        .join("");
+
+    list
+      .querySelectorAll(
+        "[data-message-id]"
+      )
+      .forEach((button) => {
+        button.addEventListener(
+          "click",
+          () => {
+            const message =
+              messages.find(
+                (item) =>
+                  item.id ===
+                  button.dataset
+                    .messageId
+              );
+
+            if (message) {
+              openMessage(message);
+            }
+          }
+        );
+      });
+  }
+
+  async function openMessage(message) {
+    detail.innerHTML = `
+      <div class="message-detail">
+        <div class="message-detail-head">
+          <div>
+            <span class="admin-kicker">
+              CLIENT ENQUIRY
+            </span>
+
+            <h2>
+              ${window.YalerimaAdmin.escape(
+                message.subject ||
+                "Website enquiry"
+              )}
+            </h2>
+          </div>
+
+          <span class="status ${window.YalerimaAdmin.escape(
+            message.status ||
+            "new"
+          )}">
+            ${window.YalerimaAdmin.escape(
+              message.status ||
+              "new"
+            )}
+          </span>
+        </div>
+
+        <div class="client-profile">
+          <div class="message-avatar large">
+            ${window.YalerimaAdmin.escape(
+              (message.name || "?")
+                .slice(0, 1)
+                .toUpperCase()
+            )}
+          </div>
+
+          <div>
+            <strong>
+              ${window.YalerimaAdmin.escape(
+                message.name ||
+                "Unknown client"
+              )}
+            </strong>
+
+            <a
+              href="mailto:${encodeURIComponent(
+                message.email || ""
+              )}"
+            >
+              ${window.YalerimaAdmin.escape(
+                message.email ||
+                "No email supplied"
+              )}
+            </a>
+
+            ${
+              message.phone
+                ? `
+                  <a href="tel:${encodeURIComponent(message.phone)}">
+                    ${window.YalerimaAdmin.escape(
+                      message.phone
+                    )}
+                  </a>
+                `
+                : ""
+            }
+          </div>
+        </div>
+
+        <div class="message-body-box">
+          ${window.YalerimaAdmin.escape(
+            message.message ||
+            ""
+          ).replace(/\n/g, "<br>")}
+        </div>
+
+        <div class="message-detail-meta">
+          <div>
+            <span>RECEIVED</span>
+            <strong>
+              ${window.YalerimaAdmin.formatDate(
+                message.created_at
+              )}
+            </strong>
+          </div>
+
+          <div>
+            <span>PRIORITY</span>
+            <strong>
+              ${window.YalerimaAdmin.escape(
+                message.priority ||
+                "normal"
+              )}
+            </strong>
+          </div>
+        </div>
+
+        <div class="message-actions">
+          <label>
+            Status
+            <select id="detailStatus">
+              <option value="new" ${
+                message.status === "new"
+                  ? "selected"
+                  : ""
+              }>New</option>
+
+              <option value="read" ${
+                message.status === "read"
+                  ? "selected"
+                  : ""
+              }>Read</option>
+
+              <option value="replied" ${
+                message.status === "replied"
+                  ? "selected"
+                  : ""
+              }>Replied</option>
+
+              <option value="closed" ${
+                message.status === "closed"
+                  ? "selected"
+                  : ""
+              }>Closed</option>
+            </select>
+          </label>
+
+          <label>
+            Priority
+            <select id="detailPriority">
+              <option value="low" ${
+                message.priority === "low"
+                  ? "selected"
+                  : ""
+              }>Low</option>
+
+              <option value="normal" ${
+                !message.priority ||
+                message.priority === "normal"
+                  ? "selected"
+                  : ""
+              }>Normal</option>
+
+              <option value="high" ${
+                message.priority === "high"
+                  ? "selected"
+                  : ""
+              }>High</option>
+
+              <option value="urgent" ${
+                message.priority === "urgent"
+                  ? "selected"
+                  : ""
+              }>Urgent</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="message-actions-buttons">
+          <button
+            id="saveMessageStatus"
+            class="admin-button primary"
+            type="button"
+          >
+            Save status
+          </button>
+
+          ${
+            message.email
+              ? `
+                <a
+                  class="admin-button secondary"
+                  href="mailto:${encodeURIComponent(
+                    message.email
+                  )}?subject=${encodeURIComponent(
+                    "Re: " +
+                    (
+                      message.subject ||
+                      "Your enquiry to Yalerima Technologies"
+                    )
+                  )}"
+                >
+                  Reply to client ↗
+                </a>
+              `
+              : ""
+          }
+        </div>
+      </div>
+    `;
+
+    document
+      .getElementById(
+        "saveMessageStatus"
+      )
+      .addEventListener(
+        "click",
+        () =>
+          updateMessage(
+            message.id
+          )
+      );
+
+    if (message.status === "new") {
+      await markRead(message.id);
+    }
+  }
+
+  async function markRead(id) {
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/client_messages?id=eq." +
+            encodeURIComponent(id),
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              status: "read",
+              read_at:
+                new Date().toISOString()
+            })
+          }
+        );
+
+      if (response.ok) {
+        const item =
+          messages.find(
+            (message) =>
+              message.id === id
+          );
+
+        if (item) {
+          item.status = "read";
+        }
+
+        renderList();
+      }
+    } catch {}
+  }
+
+  async function updateMessage(id) {
+    const nextStatus =
+      document.getElementById(
+        "detailStatus"
+      ).value;
+
+    const nextPriority =
+      document.getElementById(
+        "detailPriority"
+      ).value;
+
+    try {
+      const response =
+        await window.YalerimaAdmin.adminRequest(
+          "/rest/v1/client_messages?id=eq." +
+            encodeURIComponent(id),
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              status: nextStatus,
+              priority: nextPriority,
+              updated_at:
+                new Date().toISOString()
+            })
+          }
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          await response.text()
+        );
+      }
+
+      window.YalerimaAdmin.toast(
+        "Message updated successfully."
+      );
+
+      await loadMessages();
+    } catch (error) {
+      window.YalerimaAdmin.toast(
+        "Message could not be updated.",
+        "error"
+      );
+    }
+  }
+
+  search.addEventListener(
+    "input",
+    renderList
+  );
+
+  status.addEventListener(
+    "change",
+    renderList
+  );
+
+  priority.addEventListener(
+    "change",
+    renderList
+  );
+
+  await loadMessages();
+})();
+</script>
+
+</body>
+</html>

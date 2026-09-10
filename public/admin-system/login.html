@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#070909">
+  <title>Administrator Login | YALERIMA TECHNOLOGIES LIMITED</title>
+  <link rel="stylesheet" href="/admin-system/assets/portal.css">
+  <style>
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(179,19,27,.18), transparent 28%),
+        radial-gradient(circle at 85% 75%, rgba(25,93,61,.16), transparent 30%),
+        #070909;
+      color: white;
+    }
+
+    .login-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 35px 18px;
+    }
+
+    .login-card {
+      width: min(510px, 100%);
+      padding: 43px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 30px;
+      background: rgba(255,255,255,.065);
+      box-shadow: 0 35px 100px rgba(0,0,0,.38);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+    }
+
+    .login-logo {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: white;
+      border: 1px solid rgba(255,255,255,.4);
+      box-shadow: 0 20px 55px rgba(0,0,0,.25);
+    }
+
+    .login-logo img {
+      width: 87%;
+      height: 87%;
+      object-fit: contain;
+    }
+
+    .login-heading {
+      text-align: center;
+    }
+
+    .login-heading .portal-kicker {
+      color: var(--gold-light);
+    }
+
+    .login-heading h1 {
+      margin: 12px 0 10px;
+      font-family: var(--display);
+      font-size: 45px;
+      line-height: 1.02;
+    }
+
+    .login-heading p {
+      margin: 0 0 32px;
+      color: rgba(255,255,255,.52);
+      font-size: 18px;
+    }
+
+    .login-form label {
+      display: block;
+      margin-bottom: 19px;
+      color: rgba(255,255,255,.8);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .login-form input {
+      width: 100%;
+      margin-top: 8px;
+      min-height: 57px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 13px;
+      outline: none;
+      color: white;
+      background: rgba(0,0,0,.25);
+    }
+
+    .login-form input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(201,160,74,.08);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap input {
+      padding-right: 85px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      height: 41px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 9px;
+      color: rgba(255,255,255,.65);
+      background: rgba(255,255,255,.07);
+      font-size: 13px;
+    }
+
+    .login-button {
+      width: 100%;
+      min-height: 59px;
+      margin-top: 6px;
+      border: 0;
+      border-radius: 14px;
+      color: white;
+      background: var(--red);
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .login-button:hover {
+      background: var(--red-bright);
+    }
+
+    .login-button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .login-error {
+      margin: 0 0 16px;
+      padding: 13px 15px;
+      border: 1px solid rgba(223,32,41,.25);
+      border-radius: 12px;
+      color: #ffb4b8;
+      background: rgba(179,19,27,.13);
+      font-size: 15px;
+    }
+
+    .login-footer {
+      margin-top: 28px;
+      text-align: center;
+      color: rgba(255,255,255,.3);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .login-footer a {
+      color: var(--gold-light);
+    }
+
+    @media (max-width: 520px) {
+      .login-card {
+        padding: 30px 21px;
+        border-radius: 24px;
+      }
+
+      .login-heading h1 {
+        font-size: 39px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="login-page">
+    <section class="login-card">
+      <div class="login-logo">
+        <img src="/logo.png" alt="Yalerima Technologies Limited">
+      </div>
+
+      <div class="login-heading">
+        <div class="portal-kicker">
+          SECURE ADMINISTRATION
+        </div>
+
+        <h1>
+          Administrator
+          <br>
+          Portal
+        </h1>
+
+        <p>
+          Authorised access to the Yalerima
+          management system.
+        </p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div
+          id="loginError"
+          class="login-error"
+          hidden
+        ></div>
+
+        <label>
+          Administrator email
+          <input
+            id="email"
+            type="email"
+            required
+            autocomplete="username"
+            placeholder="Administrator email"
+          >
+        </label>
+
+        <label>
+          Password
+          <div class="password-wrap">
+            <input
+              id="password"
+              type="password"
+              required
+              autocomplete="current-password"
+              placeholder="Enter your password"
+            >
+
+            <button
+              type="button"
+              id="togglePassword"
+              class="password-toggle"
+            >
+              Show
+            </button>
+          </div>
+        </label>
+
+        <button
+          id="loginButton"
+          class="login-button"
+          type="submit"
+        >
+          Sign in to dashboard
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <a href="/">
+          ← Return to Yalerima website
+        </a>
+        <br>
+        Protected administrator area.
+      </div>
+    </section>
+  </main>
+
+  <script src="/admin-system/assets/config.js"></script>
+  <script src="/admin-system/assets/admin.js"></script>
+
+  <script>
+    const form =
+      document.getElementById("loginForm");
+
+    const errorBox =
+      document.getElementById("loginError");
+
+    const button =
+      document.getElementById("loginButton");
+
+    const password =
+      document.getElementById("password");
+
+    const toggle =
+      document.getElementById("togglePassword");
+
+    const storedUser =
+      localStorage.getItem(
+        "yalerima_admin_user"
+      );
+
+    const storedToken =
+      localStorage.getItem(
+        "yalerima_admin_access_token"
+      );
+
+    if (storedUser && storedToken) {
+      try {
+        const user =
+          JSON.parse(storedUser);
+
+        if (
+          user.id ===
+          window.YALERIMA_CONFIG.adminUserId
+        ) {
+          window.location.href =
+            "/admin-system/dashboard.html";
+        }
+      } catch {}
+    }
+
+    toggle.addEventListener(
+      "click",
+      () => {
+        const visible =
+          password.type === "text";
+
+        password.type =
+          visible ? "password" : "text";
+
+        toggle.textContent =
+          visible ? "Show" : "Hide";
+      }
+    );
+
+    form.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        errorBox.hidden = true;
+
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
+
+        const passwordValue =
+          password.value;
+
+        if (!email || !passwordValue) {
+          errorBox.textContent =
+            "Please enter both your email address and password.";
+
+          errorBox.hidden = false;
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent =
+          "Authenticating...";
+
+        try {
+          await window.YalerimaAdmin.login(
+            email,
+            passwordValue
+          );
+
+          window.location.href =
+            "/admin-system/dashboard.html";
+        } catch (error) {
+          console.error(error);
+
+          const message =
+            String(error.message || "");
+
+          if (
+            message
+              .toLowerCase()
+              .includes("email")
+          ) {
+            errorBox.textContent =
+              "The administrator email or password is incorrect.";
+          } else if (
+            message
+              .toLowerCase()
+              .includes("password")
+          ) {
+            errorBox.textContent =
+              "The administrator email or password is incorrect.";
+          } else {
+            errorBox.textContent =
+              message ||
+              "Sign in failed. Please check your credentials.";
+          }
+
+          errorBox.hidden = false;
+        } finally {
+          button.disabled = false;
+          button.textContent =
+            "Sign in to dashboard";
+        }
+      }
+    );
+  </script>
+</body>
+</html>
