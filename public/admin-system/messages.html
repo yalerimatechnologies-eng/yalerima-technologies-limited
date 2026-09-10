@@ -125,6 +125,7 @@
 (async () => {
   const admin =
     await window.YalerimaAdmin.guard();
+      window.YalerimaAdmin.enableHistoryProtection();
 
   if (!admin) return;
 

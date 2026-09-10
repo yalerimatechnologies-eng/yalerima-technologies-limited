@@ -174,8 +174,9 @@
         "yalerima_admin_user"
       );
 
-      window.location.href =
-        "/admin-system/login.html";
+      window.location.replace(
+        "/admin-system/login.html"
+      );
     },
 
     authHeaders() {
@@ -298,6 +299,52 @@
       );
 
       return user;
+    },
+
+    async protectPage() {
+      const loginPage = "/admin-system/login.html";
+
+      const token = localStorage.getItem(
+        "yalerima_admin_access_token"
+      );
+
+      if (!token) {
+        window.location.replace(loginPage);
+        return false;
+      }
+
+      const user = await this.getSession();
+
+      if (!user || user.id !== this.config.adminUserId) {
+        await this.logout();
+        return false;
+      }
+
+      return true;
+    },
+
+    enableHistoryProtection() {
+      window.addEventListener("pageshow", async () => {
+        const path = window.location.pathname;
+
+        if (
+          path.includes("/admin-system/") &&
+          !path.endsWith("/login.html")
+        ) {
+          await this.protectPage();
+        }
+      });
+
+      window.addEventListener("popstate", async () => {
+        const path = window.location.pathname;
+
+        if (
+          path.includes("/admin-system/") &&
+          !path.endsWith("/login.html")
+        ) {
+          await this.protectPage();
+        }
+      });
     },
 
     bindShell() {
