@@ -108,7 +108,7 @@
         SUPABASE_URL +
         "/rest/v1/projects" +
         "?select=*" +
-        "&published=eq.true" +
+        "&is_published=eq.true" +
         "&order=display_order.asc,created_at.desc";
 
       const response = await fetch(url, {

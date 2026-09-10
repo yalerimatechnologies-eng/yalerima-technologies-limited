@@ -82,7 +82,7 @@
         "?select=*" +
         "&id=eq." +
         encodeURIComponent(id) +
-        "&published=eq.true";
+        "&is_published=eq.true";
 
       const response = await fetch(url, {
         headers: {

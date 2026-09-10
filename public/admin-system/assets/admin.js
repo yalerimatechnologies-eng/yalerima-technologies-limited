@@ -33,16 +33,34 @@
     },
 
     async getSession() {
-      const response =
-        await this.request(
-          "/auth/v1/user"
+      try {
+        const token = localStorage.getItem(
+          "yalerima_admin_access_token"
         );
 
-      if (!response.ok) {
+        if (!token) {
+          return null;
+        }
+
+        const response = await fetch(
+          `${config.supabaseUrl}/auth/v1/user`,
+          {
+            headers: {
+              apikey: config.supabaseKey,
+              Authorization: "Bearer " + token
+            }
+          }
+        );
+
+        if (!response.ok) {
+          return null;
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error("Session verification failed:", error);
         return null;
       }
-
-      return response.json();
     },
 
     async verifyAdmin() {

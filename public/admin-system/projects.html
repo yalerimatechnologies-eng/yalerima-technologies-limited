@@ -470,7 +470,7 @@
     field("slug").value =
       project?.slug || "";
 
-    field("published").checked =
+    field("is_published").checked =
       Boolean(project?.published);
 
     field("featured").checked =
@@ -570,7 +570,7 @@
         if (
           selected ===
             "published" &&
-          !project.published
+          !project.is_published
         ) {
           return false;
         }
@@ -578,7 +578,7 @@
         if (
           selected ===
             "draft" &&
-          project.published
+          project.is_published
         ) {
           return false;
         }
@@ -648,12 +648,12 @@
 
               <div class="project-statuses">
                 <span class="${
-                  project.published
+                  project.is_published
                     ? "status published"
                     : "status draft"
                 }">
                   ${
-                    project.published
+                    project.is_published
                       ? "Published"
                       : "Draft"
                   }
@@ -683,7 +683,7 @@
                   data-toggle="${project.id}"
                 >
                   ${
-                    project.published
+                    project.is_published
                       ? "Unpublish"
                       : "Publish"
                   }
@@ -763,8 +763,8 @@
           {
             method: "PATCH",
             body: JSON.stringify({
-              published:
-                !project.published
+              is_published:
+                !project.is_published
             })
           }
         );
@@ -776,7 +776,7 @@
       }
 
       window.YalerimaAdmin.toast(
-        project.published
+        project.is_published
           ? "Project unpublished."
           : "Project published."
       );
@@ -940,8 +940,8 @@
             .trim() ||
           null,
 
-        published:
-          field("published").checked,
+        is_published:
+          field("is_published").checked,
 
         featured:
           field("featured").checked

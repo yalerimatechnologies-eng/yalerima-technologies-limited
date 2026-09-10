@@ -215,7 +215,7 @@
     try {
       const response =
         await window.YalerimaAdmin.adminRequest(
-          "/rest/v1/projects?select=id,published,featured"
+          "/rest/v1/projects?select=id,is_published,featured"
         );
 
       if (!response.ok) {
@@ -232,7 +232,7 @@
 
       const published =
         projects.filter(
-          (item) => item.published
+          (item) => item.is_published
         ).length;
 
       const featured =
@@ -398,7 +398,7 @@
                   </strong>
 
                   <span>
-                    ${project.published ? "Published" : "Draft"}
+                    ${project.is_published ? "Published" : "Draft"}
                     ${project.featured ? " · Featured" : ""}
                   </span>
                 </div>
