@@ -69,7 +69,7 @@ export default function Footer() {
                 </a>
 
                 <a
-                  href="#"
+                  href="https://www.instagram.com/yalerimatechnologieslimited?stkn=MXA5OTd5eXNzYmJtYg=="
                   aria-label="Instagram"
                   title="Instagram"
                 >
