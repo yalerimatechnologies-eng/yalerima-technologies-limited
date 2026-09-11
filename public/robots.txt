@@ -3,4 +3,4 @@ Allow: /
 
 Disallow: /admin-system/
 
-Sitemap: https://yalereima.com.ng/sitemap.xml
+Sitemap: https://yalerima.com.ng/sitemap.xml

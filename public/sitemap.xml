@@ -10,6 +10,12 @@
   <url>
     <loc>https://yalerima.com.ng/projects.html</loc>
     <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://yalerima.com.ng/project.html</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
@@ -17,6 +23,30 @@
     <loc>https://yalerima.com.ng/message.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://yalerima.com.ng/trust.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://yalerima.com.ng/history.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://yalerima.com.ng/privacy-policy.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://yalerima.com.ng/terms-and-conditions.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
   </url>
 
 </urlset>
