@@ -107,6 +107,12 @@ export default function Footer() {
               <a href="/admin-system/login.html">
                 Admin Portal
               </a>
+              <a href="/privacy-policy.html">
+                Privacy Policy
+              </a>
+              <a href="/terms-and-conditions.html">
+                Terms &amp; Conditions
+              </a>
             </div>
           </div>
 
