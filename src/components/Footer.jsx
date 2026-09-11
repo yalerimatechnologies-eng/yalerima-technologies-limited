@@ -61,7 +61,7 @@ export default function Footer() {
 
               <div className="footer-socials">
                 <a
-                  href="#"
+                  href="https://www.facebook.com/share/1UiQrDN5CG/"
                   aria-label="Facebook"
                   title="Facebook"
                 >
@@ -77,7 +77,7 @@ export default function Footer() {
                 </a>
 
                 <a
-                  href="#"
+                  href="https://x.com/alarabii001"
                   aria-label="X"
                   title="X"
                 >
